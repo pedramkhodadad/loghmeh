@@ -38,4 +38,34 @@ urlpatterns = [
         name='restaurant_delete'
     ),
 
+    path(
+    '<int:restaurant_id>/foods/',
+    views.food_list,
+    name='food_list'
+    ),
+
+    path(
+        '<int:restaurant_id>/foods/add/',
+        views.food_create,
+        name='food_create'
+    ),
+
+    path(
+        '<int:restaurant_id>/foods/<int:food_id>/edit/',
+        views.food_update,
+        name='food_update'
+    ),
+
+    path(
+        '<int:restaurant_id>/foods/<int:food_id>/delete/',
+        views.food_delete,
+        name='food_delete'
+    ),
+
+    path(
+        '<int:restaurant_id>/foods/<int:food_id>/toggle/',
+        views.food_toggle_availability,
+        name='food_toggle_availability'
+    ),
+
 ]

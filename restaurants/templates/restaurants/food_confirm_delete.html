@@ -1,0 +1,23 @@
+{% extends 'restaurants/base.html' %}
+
+{% block content %}
+
+<h2>حذف غذا</h2>
+
+<p>
+    آیا از حذف غذای {{ food.name }} مطمئن هستید؟
+</p>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <button type="submit">بله، حذف شود</button>
+
+</form>
+
+<a href="{% url 'restaurants:food_list' restaurant.id %}">
+    انصراف
+</a>
+
+{% endblock %}

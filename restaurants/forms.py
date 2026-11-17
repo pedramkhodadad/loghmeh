@@ -1,7 +1,7 @@
 
 from django import forms
 from .models import Restaurant
-
+from .models import Food
 
 class RestaurantForm(forms.ModelForm):
 
@@ -32,4 +32,28 @@ class RestaurantForm(forms.ModelForm):
             'address': forms.Textarea(
                 attrs={'rows': 3}
             ),
+        }
+
+
+
+
+class FoodForm(forms.ModelForm):
+
+    class Meta:
+        model = Food
+
+        fields = [
+            'name',
+            'description',
+            'price',
+            'image',
+            'is_available',
+        ]
+
+        labels = {
+            'name': 'نام غذا',
+            'description': 'توضیحات غذا',
+            'price': 'قیمت',
+            'image': 'تصویر غذا',
+            'is_available': 'موجود بودن غذا',
         }
