@@ -1,0 +1,58 @@
+
+{% extends 'restaurants/base.html' %}
+
+{% block content %}
+
+<h2>رستوران‌های من</h2>
+
+<a href="{% url 'restaurants:restaurant_create' %}"
+   class="btn">
+    افزودن رستوران جدید
+</a>
+
+<hr>
+
+{% for restaurant in restaurants %}
+
+    <div class="restaurant">
+
+        <h3>{{ restaurant.name }}</h3>
+
+        <p>
+            آدرس: {{ restaurant.address }}
+        </p>
+
+        <p>
+            شماره تماس: {{ restaurant.phone }}
+        </p>
+
+        {% if restaurant.image %}
+            <img src="{{ restaurant.image.url }}"
+                 alt="{{ restaurant.name }}">
+        {% endif %}
+
+        <br><br>
+
+        <a href="{% url 'restaurants:restaurant_detail' restaurant.pk %}">
+            مشاهده جزئیات
+        </a>
+
+        <a href="{% url 'restaurants:restaurant_update' restaurant.pk %}"
+           class="edit">
+            ویرایش
+        </a>
+
+        <a href="{% url 'restaurants:restaurant_delete' restaurant.pk %}"
+           class="delete">
+            حذف
+        </a>
+
+    </div>
+
+{% empty %}
+
+    <p>هنوز هیچ رستورانی ثبت نکرده‌اید.</p>
+
+{% endfor %}
+
+{% endblock %}

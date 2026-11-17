@@ -1,0 +1,28 @@
+
+{% extends 'restaurants/base.html' %}
+
+{% block content %}
+
+{% if restaurant %}
+    <h2>ویرایش رستوران</h2>
+{% else %}
+    <h2>افزودن رستوران جدید</h2>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn">
+        ذخیره اطلاعات
+    </button>
+
+    <a href="{% url 'restaurants:restaurant_list' %}">
+        بازگشت
+    </a>
+
+</form>
+
+{% endblock %}
