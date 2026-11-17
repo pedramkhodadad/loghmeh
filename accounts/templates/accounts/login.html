@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به لقمه</title>
+</head>
+<body>
+
+    <h1>ورود به لقمه</h1>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label>نام کاربری:</label>
+            <input type="text" name="username" required>
+        </div>
+
+        <br>
+
+        <div>
+            <label>رمز عبور:</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <br>
+
+        <button type="submit">ورود</button>
+    </form>
+
+    <p>
+        حساب کاربری ندارید؟
+        <a href="{% url 'accounts:register' %}">ثبت‌نام کنید</a>
+    </p>
+
+</body>
+</html>

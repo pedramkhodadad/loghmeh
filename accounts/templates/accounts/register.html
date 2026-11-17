@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت‌نام در لقمه</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<form method="POST" action="{% url 'accounts:logout' %}">
+    {% csrf_token %}
+    <button type="submit">خروج از حساب کاربری</button>
+</form>
+<body>
+
+    <h1 class="text-3xl font-bold text-blue-600">
+    ثبت‌نام در لقمه
+    </h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">ثبت‌نام</button>
+    </form>
+
+    <p>
+        قبلاً ثبت‌نام کرده‌اید؟
+        صفحه ورود به‌زودی اضافه می‌شود.
+    </p>
+
+</body>
+</html>
