@@ -1,0 +1,86 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">
+            {% if form.instance.pk %}
+                ویرایش تخفیف
+            {% else %}
+                ایجاد تخفیف جدید
+            {% endif %}
+        </h1>
+
+        <p class="text-gray-500 mt-2">
+            اطلاعات تخفیف موردنظر را وارد کنید.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+    <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-5">
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+            <div class="space-y-5">
+
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}"
+                           class="block text-gray-700 font-medium mb-2">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <p class="text-sm text-gray-500 mt-1">
+                            {{ field.help_text }}
+                        </p>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="text-sm text-red-600 mt-1">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="flex gap-3 mt-8">
+
+                <button type="submit"
+                        class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                    {% if form.instance.pk %}
+                        ذخیره تغییرات
+                    {% else %}
+                        ثبت تخفیف
+                    {% endif %}
+                </button>
+
+                <a href="{% url 'discounts:discount_list' %}"
+                   class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    بازگشت
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
