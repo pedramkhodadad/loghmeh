@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ restaurant.name }} | لقمه</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-5">
+            <a href="{% url 'restaurants:list' %}"
+               class="text-green-600 font-bold">
+                ← بازگشت به رستوران‌ها
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
+
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-10">
+
+            {% if restaurant.image %}
+                <img src="{{ restaurant.image.url }}"
+                     alt="{{ restaurant.name }}"
+                     class="w-full h-64 object-cover">
+            {% endif %}
+
+            <div class="p-7">
+
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-4">
+                    {{ restaurant.name }}
+                </h1>
+
+                <p class="text-gray-600 mb-5">
+                    {{ restaurant.description|default:"توضیحاتی ثبت نشده است." }}
+                </p>
+
+                <div class="text-sm text-gray-500 space-y-2">
+                    <p>📍 آدرس: {{ restaurant.address }}</p>
+                    <p>📞 شماره تماس: {{ restaurant.phone }}</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-7">
+            منوی غذاها
+        </h2>
+
+        {% if foods %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {% for food in foods %}
+
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+
+                        {% if food.image %}
+                            <img src="{{ food.image.url }}"
+                                 alt="{{ food.name }}"
+                                 class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="w-full h-48 bg-green-50 flex items-center justify-center">
+                                <span class="text-green-600 font-bold">
+                                    تصویر غذا
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <div class="p-5">
+
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">
+                                {{ food.name }}
+                            </h3>
+
+                            <p class="text-gray-500 text-sm mb-4">
+                                {{ food.description|default:"توضیحاتی ثبت نشده است." }}
+                            </p>
+
+                            <div class="flex items-center justify-between">
+                                <span class="text-green-600 font-extrabold">
+                                    {{ food.price }} تومان
+                                </span>
+
+                                <span class="text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                    موجود
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-white rounded-2xl p-10 text-center shadow-sm">
+                <h3 class="text-lg font-bold text-gray-700">
+                    هنوز غذایی برای این رستوران ثبت نشده است.
+                </h3>
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
