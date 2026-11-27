@@ -39,9 +39,9 @@ urlpatterns = [
     ),
 
     path(
-    '<int:restaurant_id>/foods/',
-    views.food_list,
-    name='food_list'
+        '<int:restaurant_id>/foods/',
+        views.food_list,
+        name='food_list'
     ),
 
     path(
@@ -69,3 +69,4 @@ urlpatterns = [
     ),
 
 ]
+
