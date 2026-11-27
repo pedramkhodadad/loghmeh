@@ -1,5 +1,3 @@
-from django.contrib import admin
-
 
 from django.contrib import admin
 from .models import Restaurant, Food
@@ -45,5 +43,5 @@ class FoodAdmin(admin.ModelAdmin):
 
     list_filter = (
         'is_available',
+        'restaurant',
     )
-

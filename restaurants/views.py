@@ -1,16 +1,19 @@
 
 from functools import wraps
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant
-from .forms import RestaurantForm
-from django.contrib import messages
 from django.views.decorators.http import require_POST
-from django.db.models.deletion import ProtectedError
-from .models import Restaurant, Food
-from .forms import FoodForm
 
+from .models import Restaurant, Food
+from .forms import RestaurantForm, FoodForm
+
+
+# بررسی دسترسی صاحب رستوران
 def owner_required(view_func):
 
     @wraps(view_func)
@@ -26,9 +29,64 @@ def owner_required(view_func):
     return wrapper
 
 
+# ==========================================
+# نمایش عمومی رستوران‌ها
+# ==========================================
+
+def restaurant_list(request):
+
+    query = request.GET.get('q', '').strip()
+
+    restaurants = Restaurant.objects.filter(
+        is_active=True
+    )
+
+    if query:
+        restaurants = restaurants.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(foods__name__icontains=query)
+        ).distinct()
+
+    return render(
+        request,
+        'restaurants/restaurant_list.html',
+        {
+            'restaurants': restaurants,
+            'query': query
+        }
+    )
+
+
+def restaurant_detail(request, pk):
+
+    restaurant = get_object_or_404(
+        Restaurant,
+        pk=pk,
+        is_active=True
+    )
+
+    foods = restaurant.foods.filter(
+        is_available=True
+    )
+
+    return render(
+        request,
+        'restaurants/restaurant_detail.html',
+        {
+            'restaurant': restaurant,
+            'foods': foods
+        }
+    )
+
+
+# ==========================================
+# مدیریت رستوران توسط صاحب رستوران
+# ==========================================
+
 @login_required
 @owner_required
-def restaurant_list(request):
+def restaurant_owner_list(request):
 
     restaurants = Restaurant.objects.filter(
         owner=request.user
@@ -37,7 +95,10 @@ def restaurant_list(request):
     return render(
         request,
         'restaurants/restaurant_list.html',
-        {'restaurants': restaurants}
+        {
+            'restaurants': restaurants,
+            'query': ''
+        }
     )
 
 
@@ -55,15 +116,19 @@ def restaurant_create(request):
         if form.is_valid():
 
             restaurant = form.save(commit=False)
-
             restaurant.owner = request.user
-
             restaurant.save()
 
-            return redirect('restaurants:restaurant_list')
+            messages.success(
+                request,
+                'رستوران با موفقیت ایجاد شد.'
+            )
+
+            return redirect(
+                'restaurants:restaurant_owner_list'
+            )
 
     else:
-
         form = RestaurantForm()
 
     return render(
@@ -72,36 +137,6 @@ def restaurant_create(request):
         {'form': form}
     )
 
-
-@login_required
-@owner_required
-def restaurant_detail(request, pk):
-
-    restaurant = get_object_or_404(
-        Restaurant,
-        pk=pk,
-        owner=request.user
-    )
-
-    return render(
-        request,
-        'restaurants/restaurant_detail.html',
-        {'restaurant': restaurant}
-    )
-
-@login_required
-@owner_required
-def restaurant_owner_list(request):
-
-    restaurants = Restaurant.objects.filter(
-        owner=request.user
-    ).order_by('-created_at')
-
-    return render(
-        request,
-        'restaurants/restaurant_list.html',
-        {'restaurants': restaurants}
-    )
 
 @login_required
 @owner_required
@@ -125,10 +160,16 @@ def restaurant_update(request, pk):
 
             form.save()
 
-            return redirect('restaurants:restaurant_list')
+            messages.success(
+                request,
+                'اطلاعات رستوران ویرایش شد.'
+            )
+
+            return redirect(
+                'restaurants:restaurant_owner_list'
+            )
 
     else:
-
         form = RestaurantForm(instance=restaurant)
 
     return render(
@@ -155,7 +196,14 @@ def restaurant_delete(request, pk):
 
         restaurant.delete()
 
-        return redirect('restaurants:restaurant_list')
+        messages.success(
+            request,
+            'رستوران حذف شد.'
+        )
+
+        return redirect(
+            'restaurants:restaurant_owner_list'
+        )
 
     return render(
         request,
@@ -163,7 +211,13 @@ def restaurant_delete(request, pk):
         {'restaurant': restaurant}
     )
 
+
+# ==========================================
+# مدیریت غذاها
+# ==========================================
+
 @login_required
+@owner_required
 def food_list(request, restaurant_id):
 
     restaurant = get_object_or_404(
@@ -185,7 +239,9 @@ def food_list(request, restaurant_id):
         }
     )
 
+
 @login_required
+@owner_required
 def food_create(request, restaurant_id):
 
     restaurant = get_object_or_404(
@@ -207,7 +263,10 @@ def food_create(request, restaurant_id):
             food.restaurant = restaurant
             food.save()
 
-            messages.success(request, 'غذا با موفقیت اضافه شد.')
+            messages.success(
+                request,
+                'غذا با موفقیت اضافه شد.'
+            )
 
             return redirect(
                 'restaurants:food_list',
@@ -227,7 +286,9 @@ def food_create(request, restaurant_id):
         }
     )
 
+
 @login_required
+@owner_required
 def food_update(request, restaurant_id, food_id):
 
     food = get_object_or_404(
@@ -249,7 +310,10 @@ def food_update(request, restaurant_id, food_id):
 
             form.save()
 
-            messages.success(request, 'اطلاعات غذا ویرایش شد.')
+            messages.success(
+                request,
+                'اطلاعات غذا ویرایش شد.'
+            )
 
             return redirect(
                 'restaurants:food_list',
@@ -269,7 +333,9 @@ def food_update(request, restaurant_id, food_id):
         }
     )
 
+
 @login_required
+@owner_required
 def food_delete(request, restaurant_id, food_id):
 
     food = get_object_or_404(
@@ -283,9 +349,14 @@ def food_delete(request, restaurant_id, food_id):
 
         try:
             food.delete()
-            messages.success(request, 'غذا حذف شد.')
+
+            messages.success(
+                request,
+                'غذا حذف شد.'
+            )
 
         except ProtectedError:
+
             messages.error(
                 request,
                 'این غذا در سفارش‌های قبلی استفاده شده و قابل حذف نیست. آن را ناموجود کنید.'
@@ -305,7 +376,9 @@ def food_delete(request, restaurant_id, food_id):
         }
     )
 
+
 @login_required
+@owner_required
 @require_POST
 def food_toggle_availability(request, restaurant_id, food_id):
 
@@ -317,10 +390,12 @@ def food_toggle_availability(request, restaurant_id, food_id):
     )
 
     food.is_available = not food.is_available
-    food.save(update_fields=['is_available'])
+
+    food.save(
+        update_fields=['is_available']
+    )
 
     return redirect(
         'restaurants:food_list',
         restaurant_id=restaurant_id
     )
-
