@@ -1,0 +1,61 @@
+{% extends 'restaurants/base.html' %}
+
+{% block content %}
+
+<h2>مدیریت منوی {{ restaurant.name }}</h2>
+
+<a href="{% url 'restaurants:food_create' restaurant.id %}">
+    افزودن غذای جدید
+</a>
+
+<hr>
+
+{% for food in foods %}
+
+    <div>
+        <h3>{{ food.name }}</h3>
+
+        {% if food.image %}
+            <img src="{{ food.image.url }}" width="150">
+        {% endif %}
+
+        <p>{{ food.description }}</p>
+
+        <p>قیمت: {{ food.price }}</p>
+
+        <p>
+            {% if food.is_available %}
+                موجود
+            {% else %}
+                ناموجود
+            {% endif %}
+        </p>
+
+        <a href="{% url 'restaurants:food_update' restaurant.id food.id %}">
+            ویرایش
+        </a>
+
+        <a href="{% url 'restaurants:food_delete' restaurant.id food.id %}">
+            حذف
+        </a>
+
+        <form method="post"
+              action="{% url 'restaurants:food_toggle_availability' restaurant.id food.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                تغییر وضعیت موجودی
+            </button>
+        </form>
+
+    </div>
+
+    <hr>
+
+{% empty %}
+
+    <p>هنوز غذایی ثبت نشده است.</p>
+
+{% endfor %}
+
+{% endblock %}

@@ -22,6 +22,25 @@ class Discount(models.Model):
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
+    # حداقل مبلغ سفارش برای استفاده از تخفیف
+    min_order_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)]
+    )
+
+    # حداکثر تعداد دفعات استفاده از کد تخفیف
+    max_uses = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1)]
+    )
+
+    # تعداد دفعات استفاده‌شده از کد تخفیف
+    used_count = models.PositiveIntegerField(default=0)
+
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

@@ -1,137 +1,58 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رستوران‌های لقمه</title>
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-</head>
+{% extends 'restaurants/base.html' %}
 
-<body class="bg-gray-50 min-h-screen">
+{% block content %}
 
-    <header class="bg-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-6 py-5">
-            <h1 class="text-3xl font-extrabold text-green-600">
-                لقمه
-            </h1>
-            <p class="text-gray-500 mt-1">
-                رستوران مورد علاقه‌ات رو پیدا کن!
-            </p>
-        </div>
-    </header>
+<h2>رستوران‌های من</h2>
 
-    <main class="max-w-6xl mx-auto px-6 py-10">
+<a href="{% url 'restaurants:restaurant_create' %}"
+   class="btn">
+    افزودن رستوران جدید
+</a>
 
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-            رستوران‌های ما
-        </h2>
+<hr>
 
-        <!-- Search Form -->
-        <form method="GET" action="{% url 'restaurants:list' %}"
-              class="mb-10 flex flex-col sm:flex-row gap-3">
+{% for restaurant in restaurants %}
 
-            <input
-                type="text"
-                name="q"
-                value="{{ query }}"
-                placeholder="نام رستوران یا غذای مورد نظرت رو جستجو کن..."
-                class="flex-1 px-5 py-4 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
+    <div class="restaurant">
 
-            <button
-                type="submit"
-                class="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-4 rounded-xl transition"
-            >
-                جستجو
-            </button>
+        <h3>{{ restaurant.name }}</h3>
 
-            {% if query %}
-                <a href="{% url 'restaurants:list' %}"
-                   class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-6 py-4 rounded-xl text-center transition">
-                    پاک کردن
-                </a>
-            {% endif %}
+        <p>
+            آدرس: {{ restaurant.address }}
+        </p>
 
-        </form>
+        <p>
+            شماره تماس: {{ restaurant.phone }}
+        </p>
 
-        {% if query %}
-            <p class="text-gray-600 mb-6">
-                نتایج جستجو برای «{{ query }}»
-            </p>
+        {% if restaurant.image %}
+            <img src="{{ restaurant.image.url }}"
+                 alt="{{ restaurant.name }}">
         {% endif %}
 
-        {% if restaurants %}
+        <br><br>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <a href="{% url 'restaurants:restaurant_detail' restaurant.pk %}">
+            مشاهده جزئیات
+        </a>
 
-                {% for restaurant in restaurants %}
+        <a href="{% url 'restaurants:restaurant_update' restaurant.pk %}"
+           class="edit">
+            ویرایش
+        </a>
 
-                    <a href="{% url 'restaurants:detail' restaurant.pk %}"
-                       class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition overflow-hidden">
+        <a href="{% url 'restaurants:restaurant_delete' restaurant.pk %}"
+           class="delete">
+            حذف
+        </a>
 
-                        {% if restaurant.image %}
-                            <img src="{{ restaurant.image.url }}"
-                                 alt="{{ restaurant.name }}"
-                                 class="w-full h-48 object-cover">
-                        {% else %}
-                            <div class="w-full h-48 bg-green-50 flex items-center justify-center">
-                                <span class="text-green-600 text-lg font-bold">
-                                    تصویر رستوران
-                                </span>
-                            </div>
-                        {% endif %}
+    </div>
 
-                        <div class="p-5">
+{% empty %}
 
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">
-                                {{ restaurant.name }}
-                            </h3>
+    <p>هنوز هیچ رستورانی ثبت نکرده‌اید.</p>
 
-                            <p class="text-gray-500 text-sm mb-4">
-                                {{ restaurant.description|default:"توضیحاتی برای این رستوران ثبت نشده است."|truncatewords:20 }}
-                            </p>
+{% endfor %}
 
-                            <p class="text-gray-400 text-sm">
-                                {{ restaurant.address|truncatewords:10 }}
-                            </p>
-
-                            <div class="mt-5 text-green-600 font-bold">
-                                مشاهده منو ←
-                            </div>
-
-                        </div>
-
-                    </a>
-
-                {% endfor %}
-
-            </div>
-
-        {% else %}
-
-            <div class="bg-white rounded-2xl p-10 text-center shadow-sm">
-                <h3 class="text-xl font-bold text-gray-700 mb-3">
-                    {% if query %}
-                        نتیجه‌ای پیدا نشد!
-                    {% else %}
-                        هنوز رستورانی ثبت نشده است!
-                    {% endif %}
-                </h3>
-
-                <p class="text-gray-500">
-                    {% if query %}
-                        نام رستوران یا غذای دیگری رو امتحان کن.
-                    {% else %}
-                        به‌زودی رستوران‌های جدید به لقمه اضافه می‌شوند.
-                    {% endif %}
-                </p>
-            </div>
-
-        {% endif %}
-
-    </main>
-
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,28 @@
+
+{% extends 'restaurants/base.html' %}
+
+{% block content %}
+
+<h2>حذف رستوران</h2>
+
+<p>
+    آیا از حذف رستوران
+    <strong>{{ restaurant.name }}</strong>
+    مطمئن هستید؟
+</p>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <button type="submit" class="delete">
+        بله، حذف شود
+    </button>
+
+    <a href="{% url 'restaurants:restaurant_list' %}">
+        انصراف
+    </a>
+
+</form>
+
+{% endblock %}

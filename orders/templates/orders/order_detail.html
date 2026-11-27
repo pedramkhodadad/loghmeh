@@ -1,0 +1,201 @@
+
+{% extends 'restaurants/base.html' %}
+{% load order_filters %}
+{% block content %}
+
+<h2>جزئیات سفارش شماره {{ order.id }}</h2>
+
+<hr>
+
+<h3>اطلاعات مشتری</h3>
+
+<p>
+    نام مشتری:
+    {{ order.customer.get_full_name|default:order.customer.username }}
+</p>
+
+<p>
+    نام کاربری:
+    {{ order.customer.username }}
+</p>
+
+<p>
+    ایمیل:
+    {{ order.customer.email }}
+</p>
+
+<hr>
+
+<h3>اطلاعات سفارش</h3>
+
+<p>
+    شماره سفارش: {{ order.id }}
+</p>
+
+<p>
+    رستوران: {{ order.restaurant.name }}
+</p>
+
+<p>
+    تاریخ ثبت سفارش: {{ order.created_at|date:"Y/m/d - H:i" }}
+</p>
+
+<p>
+    وضعیت سفارش: {{ order.get_status_display }}
+</p>
+
+<p>
+    آدرس تحویل: {{ order.delivery_address }}
+</p>
+
+<hr>
+
+<h3>غذاهای سفارش داده شده</h3>
+
+<table border="1" cellpadding="10"
+       cellspacing="0" width="100%">
+
+    <thead>
+        <tr>
+            <th>نام غذا</th>
+            <th>تعداد</th>
+            <th>قیمت واحد</th>
+            <th>قیمت کل</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for item in order_items %}
+
+        <tr>
+            <td>{{ item.food.name }}</td>
+
+            <td>{{ item.quantity }}</td>
+
+            <td>
+                {{ item.price|floatformat:0 }}
+            </td>
+
+            <td>
+                {{ item.price|multiply:item.quantity|floatformat:0 }}
+            </td>  
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="4">
+                هیچ غذایی در این سفارش ثبت نشده است.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<hr>
+
+<h3>اطلاعات مالی</h3>
+
+<p>
+    مبلغ نهایی سفارش:
+    {{ order.total_price|floatformat:0 }}
+</p>
+
+{% if order.discount %}
+
+<p>
+    کد تخفیف:
+    {{ order.discount.code }}
+</p>
+
+<p>
+    درصد تخفیف:
+    {{ order.discount.percentage }} درصد
+</p>
+
+{% else %}
+
+<p>
+    این سفارش دارای کد تخفیف نیست.
+</p>
+
+{% endif %}
+
+<hr>
+
+<a href="{% url 'orders:restaurant_order_list' %}">
+    بازگشت به فهرست سفارش‌ها
+</a>
+
+<hr>
+
+
+<hr>
+
+<h3>مدیریت سفارش</h3>
+
+{% if order.status == 'pending' %}
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_approve' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            تأیید سفارش
+        </button>
+    </form>
+
+    <br>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_cancel' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            لغو سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'preparing' %}
+
+    <p>سفارش در حال آماده‌سازی است.</p>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_send' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            تحویل به پیک و ارسال سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'sent' %}
+
+    <p>سفارش ارسال شده است.</p>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_deliver' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            ثبت تحویل سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'delivered' %}
+
+    <p>این سفارش با موفقیت تحویل مشتری شده است.</p>
+
+
+{% elif order.status == 'cancelled' %}
+
+    <p>این سفارش لغو شده است.</p>
+
+{% endif %}
+
+
+
+{% endblock %}
