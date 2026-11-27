@@ -7,6 +7,7 @@ from discounts.models import Discount
 class Order(models.Model):
 
     class Status(models.TextChoices):
+        PENDING = 'pending', 'در انتظار تأیید'
         PREPARING = 'preparing', 'در حال آماده‌سازی'
         SENT = 'sent', 'ارسال شده'
         DELIVERED = 'delivered', 'تحویل داده شده'

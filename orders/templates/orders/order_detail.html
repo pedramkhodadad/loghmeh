@@ -131,4 +131,71 @@
     بازگشت به فهرست سفارش‌ها
 </a>
 
+<hr>
+
+
+<hr>
+
+<h3>مدیریت سفارش</h3>
+
+{% if order.status == 'pending' %}
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_approve' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            تأیید سفارش
+        </button>
+    </form>
+
+    <br>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_cancel' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            لغو سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'preparing' %}
+
+    <p>سفارش در حال آماده‌سازی است.</p>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_send' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            تحویل به پیک و ارسال سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'sent' %}
+
+    <p>سفارش ارسال شده است.</p>
+
+    <form method="POST"
+          action="{% url 'orders:restaurant_order_deliver' order.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            ثبت تحویل سفارش
+        </button>
+    </form>
+
+
+{% elif order.status == 'delivered' %}
+
+    <p>این سفارش با موفقیت تحویل مشتری شده است.</p>
+
+
+{% elif order.status == 'cancelled' %}
+
+    <p>این سفارش لغو شده است.</p>
+
+{% endif %}
+
+
+
 {% endblock %}

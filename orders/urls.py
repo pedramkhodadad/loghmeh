@@ -17,4 +17,17 @@ urlpatterns = [
         name='restaurant_order_list'
     ),
 
+    path(
+        '<int:order_id>/approve/',
+        views.restaurant_order_approve,
+        name='restaurant_order_approve'
+    ),
+
+    path(
+        '<int:order_id>/cancel/',
+        views.restaurant_order_cancel,
+        name='restaurant_order_cancel'
+    ),
+
+
 ]
