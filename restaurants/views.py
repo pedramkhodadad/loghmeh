@@ -89,6 +89,19 @@ def restaurant_detail(request, pk):
         {'restaurant': restaurant}
     )
 
+@login_required
+@owner_required
+def restaurant_owner_list(request):
+
+    restaurants = Restaurant.objects.filter(
+        owner=request.user
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'restaurants/restaurant_list.html',
+        {'restaurants': restaurants}
+    )
 
 @login_required
 @owner_required

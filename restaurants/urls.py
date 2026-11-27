@@ -7,6 +7,11 @@ app_name = 'restaurants'
 
 
 urlpatterns = [
+    path(
+    'my/',
+    views.restaurant_owner_list,
+    name='restaurant_owner_list'
+    ),
 
     path(
         '',
@@ -66,6 +71,11 @@ urlpatterns = [
         '<int:restaurant_id>/foods/<int:food_id>/toggle/',
         views.food_toggle_availability,
         name='food_toggle_availability'
+    ),
+    path(
+    'my/',
+    views.restaurant_owner_list,
+    name='restaurant_owner_list'
     ),
 
 ]

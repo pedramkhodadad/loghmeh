@@ -29,5 +29,16 @@ urlpatterns = [
         name='restaurant_order_cancel'
     ),
 
+    path(
+        '<int:order_id>/send/',
+        views.restaurant_order_send,
+        name='restaurant_order_send'
+    ),
+
+    path(
+        '<int:order_id>/deliver/',
+        views.restaurant_order_deliver,
+        name='restaurant_order_deliver'
+    ),
 
 ]
