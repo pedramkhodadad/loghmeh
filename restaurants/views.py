@@ -30,12 +30,12 @@ def owner_required(view_func):
 
 
 # ==========================================
-# بخش عمومی رستوران‌ها
+# نمایش عمومی رستوران‌ها
 # ==========================================
 
 def restaurant_list(request):
 
-    query = request.GET.get("q", "").strip()
+    query = request.GET.get('q', '').strip()
 
     restaurants = Restaurant.objects.filter(
         is_active=True
@@ -50,10 +50,10 @@ def restaurant_list(request):
 
     return render(
         request,
-        "restaurants/restaurant_list.html",
+        'restaurants/restaurant_list.html',
         {
-            "restaurants": restaurants,
-            "query": query
+            'restaurants': restaurants,
+            'query': query
         }
     )
 
@@ -72,10 +72,10 @@ def restaurant_detail(request, pk):
 
     return render(
         request,
-        "restaurants/restaurant_detail.html",
+        'restaurants/restaurant_detail.html',
         {
-            "restaurant": restaurant,
-            "foods": foods
+            'restaurant': restaurant,
+            'foods': foods
         }
     )
 
@@ -95,7 +95,10 @@ def restaurant_owner_list(request):
     return render(
         request,
         'restaurants/restaurant_list.html',
-        {'restaurants': restaurants}
+        {
+            'restaurants': restaurants,
+            'query': ''
+        }
     )
 
 
@@ -121,7 +124,9 @@ def restaurant_create(request):
                 'رستوران با موفقیت ایجاد شد.'
             )
 
-            return redirect('restaurants:restaurant_owner_list')
+            return redirect(
+                'restaurants:restaurant_owner_list'
+            )
 
     else:
         form = RestaurantForm()
@@ -160,7 +165,9 @@ def restaurant_update(request, pk):
                 'اطلاعات رستوران ویرایش شد.'
             )
 
-            return redirect('restaurants:restaurant_owner_list')
+            return redirect(
+                'restaurants:restaurant_owner_list'
+            )
 
     else:
         form = RestaurantForm(instance=restaurant)
@@ -194,7 +201,9 @@ def restaurant_delete(request, pk):
             'رستوران حذف شد.'
         )
 
-        return redirect('restaurants:restaurant_owner_list')
+        return redirect(
+            'restaurants:restaurant_owner_list'
+        )
 
     return render(
         request,
