@@ -9,6 +9,50 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 
+<a href="{% url 'orders:cart' %}"
+   class="fixed bottom-6 left-6 z-50 flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-4 rounded-2xl shadow-lg transition">
+    <span>🛒</span>
+    <span>سبد خرید</span>
+</a>
+{% if messages %}
+    <div id="toast-container"
+         class="fixed top-6 left-6 z-[100] flex flex-col gap-3">
+
+        {% for message in messages %}
+            <div class="toast-message flex items-center gap-3 min-w-[280px] max-w-sm px-5 py-4 rounded-2xl shadow-xl font-bold transition-all duration-500
+                {% if message.tags == 'warning' %}
+                    bg-yellow-100 text-yellow-800 border border-yellow-300
+                {% else %}
+                    bg-green-100 text-green-800 border border-green-300
+                {% endif %}">
+
+                <span class="text-xl">
+                    {% if message.tags == 'warning' %}
+                        ⚠️
+                    {% else %}
+                        ✓
+                    {% endif %}
+                </span>
+
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <script>
+        document.querySelectorAll('.toast-message').forEach((toast) => {
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-5');
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+
+            }, 4000);
+        });
+    </script>
+{% endif %}
 <body class="bg-gray-50 min-h-screen">
 
     <header class="bg-white shadow-sm">
@@ -88,10 +132,27 @@
                                     {{ food.price }} تومان
                                 </span>
 
-                                <span class="text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                                    موجود
-                                </span>
+                                {% if food.is_available %}
+                                    <span class="text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                        موجود
+                                    </span>
+                                {% else %}
+                                    <span class="text-xs text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                                        ناموجود
+                                    </span>
+                                {% endif %}
                             </div>
+
+                            {% if food.is_available %}
+                                <form method="POST" action="{% url 'orders:cart_add' food.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="w-full mt-5 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition">
+                                    افزودن به سبد خرید
+                                </button>
+                                </form>
+                            {% endif %}
+
 
                         </div>
 

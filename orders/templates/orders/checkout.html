@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسویه حساب | لقمه</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="{% url 'orders:cart' %}"
+               class="text-green-600 font-bold">
+                بازگشت به سبد خرید
+            </a>
+
+            <h1 class="text-xl font-extrabold text-gray-800">
+                تسویه حساب
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-10">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                <div class="md:col-span-2 space-y-6">
+
+                    <section class="bg-white rounded-2xl shadow-sm p-6">
+                        <h2 class="text-lg font-extrabold text-gray-800 mb-5">
+                            آدرس تحویل سفارش
+                        </h2>
+
+                        <textarea
+                            name="delivery_address"
+                            rows="4"
+                            required
+                            placeholder="آدرس دقیق محل تحویل را وارد کنید..."
+                            class="w-full border border-gray-200 rounded-xl p-4 focus:outline-none focus:border-green-500 resize-none"></textarea>
+                    </section>
+
+                    <section class="bg-white rounded-2xl shadow-sm p-6">
+                        <h2 class="text-lg font-extrabold text-gray-800 mb-5">
+                            کد تخفیف
+                        </h2>
+
+                        <input
+                            type="text"
+                            name="discount_code"
+                            placeholder="کد تخفیف خود را وارد کنید"
+                            class="w-full border border-gray-200 rounded-xl p-4 focus:outline-none focus:border-green-500">
+                    </section>
+
+                </div>
+
+                <div>
+                    <section class="bg-white rounded-2xl shadow-sm p-6 sticky top-6">
+
+                        <h2 class="text-lg font-extrabold text-gray-800 mb-5">
+                            خلاصه سفارش
+                        </h2>
+
+                        <div class="space-y-4 mb-6">
+
+                            {% for item in cart_items %}
+                                <div class="flex justify-between gap-3 text-sm">
+                                    <span class="text-gray-600">
+                                        {{ item.food.name }} × {{ item.quantity }}
+                                    </span>
+
+                                    <span class="font-bold text-gray-800 whitespace-nowrap">
+                                        {{ item.item_total }} تومان
+                                    </span>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-4 space-y-3">
+
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">مبلغ سفارش</span>
+                                <span class="font-bold">
+                                    {{ total_price }} تومان
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">تخفیف</span>
+                                <span class="font-bold text-green-600">
+                                    {{ discount_amount }} تومان
+                                </span>
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-4 flex justify-between items-center">
+                                <span class="font-extrabold text-gray-800">
+                                    مبلغ نهایی
+                                </span>
+
+                                <span class="text-xl font-extrabold text-green-600">
+                                    {{ final_price|default:total_price }} تومان
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full mt-7 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition">
+                            ثبت نهایی سفارش
+                        </button>
+
+                    </section>
+                </div>
+
+            </div>
+        </form>
+
+    </main>
+
+</body>
+</html>

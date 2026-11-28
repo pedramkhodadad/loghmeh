@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سبد خرید | لقمه</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="{% url 'restaurants:list' %}"
+               class="text-green-600 font-bold">
+                بازگشت به رستوران‌ها
+            </a>
+
+            <h1 class="text-xl font-extrabold text-gray-800">
+                سبد خرید من
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-10">
+
+        <h2 class="text-2xl font-extrabold text-gray-800 mb-8">
+            سبد خرید
+        </h2>
+
+        {% if cart_items %}
+
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                <div class="space-y-6">
+
+                    {% for item in cart_items %}
+
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-100 pb-6">
+
+                            <div class="flex items-center gap-4">
+
+                                {% if item.food.image %}
+                                    <img src="{{ item.food.image.url }}"
+                                         alt="{{ item.food.name }}"
+                                         class="w-20 h-20 rounded-xl object-cover">
+                                {% else %}
+                                    <div class="w-20 h-20 rounded-xl bg-green-50 flex items-center justify-center">
+                                        <span class="text-green-600 text-sm font-bold">
+                                            لقمه
+                                        </span>
+                                    </div>
+                                {% endif %}
+
+                                <div>
+                                    <h3 class="font-bold text-gray-800">
+                                        {{ item.food.name }}
+                                    </h3>
+
+                                    <p class="text-sm text-gray-500 mt-2">
+                                        {{ item.food.restaurant.name }}
+                                    </p>
+
+                                    <div class="flex items-center gap-3 mt-3">
+
+                                        <form method="POST" action="{% url 'orders:cart_update' item.food.id %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="decrease">
+
+                                            <button type="submit"
+                                                    class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">
+                                                −
+                                            </button>
+                                        </form>
+
+                                        <span class="text-sm font-bold text-gray-700">
+                                            {{ item.quantity }}
+                                        </span>
+
+                                        <form method="POST" action="{% url 'orders:cart_update' item.food.id %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="increase">
+
+                                            <button type="submit"
+                                                    class="w-8 h-8 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 font-bold">
+                                                +
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="flex items-center gap-5">
+
+                                <span class="font-extrabold text-gray-800">
+                                    {{ item.item_total }} تومان
+                                </span>
+
+                                <a href="{% url 'orders:cart_remove' item.food.id %}"
+                                   class="text-red-500 hover:text-red-700 text-sm font-bold">
+                                    حذف
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-5">
+
+                    <div>
+                        <p class="text-gray-500 mb-2">
+                            مجموع مبلغ سفارش
+                        </p>
+
+                        <p class="text-2xl font-extrabold text-green-600">
+                            {{ total_price }} تومان
+                        </p>
+                    </div>
+
+                    <a href="{% url 'orders:checkout' %}"
+                       class="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-xl transition">
+                        ادامه و ثبت سفارش
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-white rounded-2xl shadow-sm p-12 text-center">
+
+                <h3 class="text-xl font-bold text-gray-700 mb-3">
+                    سبد خرید شما خالی است!
+                </h3>
+
+                <p class="text-gray-500 mb-7">
+                    هنوز غذایی به سبد خرید خود اضافه نکرده‌اید.
+                </p>
+
+                <a href="{% url 'restaurants:list' %}"
+                   class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold px-7 py-3 rounded-xl">
+                    مشاهده رستوران‌ها
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

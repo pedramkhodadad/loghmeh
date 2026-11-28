@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سفارش‌های من | لقمه</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="{% url 'restaurants:list' %}"
+               class="text-green-600 font-bold hover:text-green-700">
+                بازگشت به رستوران‌ها
+            </a>
+
+            <h1 class="text-xl font-extrabold text-gray-800">
+                سفارش‌های من
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-10">
+
+        {% if orders %}
+
+            <div class="space-y-5">
+
+                {% for order in orders %}
+
+                    <section class="bg-white rounded-2xl shadow-sm p-6">
+
+                        <div class="flex flex-wrap justify-between items-center gap-3 border-b border-gray-100 pb-4 mb-5">
+
+                            <div>
+                                <h2 class="font-extrabold text-gray-800">
+                                    سفارش شماره {{ order.id }}
+                                </h2>
+
+                                <p class="text-sm text-gray-400 mt-1">
+                                    {{ order.created_at|date:"Y/m/d - H:i" }}
+                                </p>
+                            </div>
+
+                            <span class="px-4 py-2 rounded-xl text-sm font-bold
+                                {% if order.status == 'delivered' %}
+                                    bg-green-100 text-green-700
+                                {% elif order.status == 'cancelled' %}
+                                    bg-red-100 text-red-700
+                                {% elif order.status == 'sent' %}
+                                    bg-blue-100 text-blue-700
+                                {% else %}
+                                    bg-yellow-100 text-yellow-700
+                                {% endif %}">
+
+                                {{ order.get_status_display }}
+
+                            </span>
+
+                        </div>
+
+                        <div class="mb-5">
+                            <h3 class="font-bold text-gray-700 mb-2">
+                                {{ order.restaurant.name }}
+                            </h3>
+
+                            <div class="space-y-2">
+
+                                {% for item in order.items.all %}
+
+                                    <div class="flex justify-between text-sm text-gray-600">
+                                        <span>
+                                            {{ item.food.name }} × {{ item.quantity }}
+                                        </span>
+
+                                        <span>
+                                            {{ item.price }} تومان
+                                        </span>
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-4 space-y-2">
+
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">آدرس تحویل</span>
+                                <span class="text-gray-700 text-left max-w-xs">
+                                    {{ order.delivery_address }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-gray-700">
+                                    مبلغ نهایی
+                                </span>
+
+                                <span class="font-extrabold text-green-600 text-lg">
+                                    {{ order.total_price }} تومان
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-white rounded-2xl shadow-sm p-12 text-center">
+
+                <div class="text-5xl mb-5">🛍️</div>
+
+                <h2 class="text-xl font-extrabold text-gray-800 mb-3">
+                    هنوز سفارشی ثبت نکرده‌اید
+                </h2>
+
+                <p class="text-gray-500 mb-6">
+                    بعد از ثبت سفارش، اطلاعات آن را می‌توانید در این قسمت مشاهده کنید.
+                </p>
+
+                <a href="{% url 'restaurants:list' %}"
+                   class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold px-7 py-3 rounded-xl transition">
+                    مشاهده رستوران‌ها
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

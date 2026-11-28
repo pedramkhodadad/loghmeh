@@ -9,10 +9,18 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 
+<a href="{% url 'orders:cart' %}"
+   class="fixed bottom-6 left-6 z-50 flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-4 rounded-2xl shadow-lg transition">
+    <span>🛒</span>
+    <span>سبد خرید</span>
+</a>
 <body class="bg-gray-50 min-h-screen">
 
-    <header class="bg-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-6 py-5">
+
+<header class="bg-white shadow-sm">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+
+        <div>
             <h1 class="text-3xl font-extrabold text-green-600">
                 لقمه
             </h1>
@@ -20,7 +28,16 @@
                 رستوران مورد علاقه‌ات رو پیدا کن!
             </p>
         </div>
-    </header>
+
+        <a href="{% url 'orders:my_orders' %}"
+           class="flex items-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold px-5 py-3 rounded-xl transition">
+            <span>📦</span>
+            <span>پیگیری سفارش‌ها</span>
+        </a>
+
+    </div>
+</header>
+
 
     <main class="max-w-6xl mx-auto px-6 py-10">
 
