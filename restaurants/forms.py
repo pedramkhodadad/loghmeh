@@ -15,6 +15,7 @@ class RestaurantForm(forms.ModelForm):
             'address',
             'phone',
             'image',
+            'is_active'
         ]
 
         labels = {
@@ -54,7 +55,7 @@ class FoodForm(forms.ModelForm):
             'price',
             'image',
             'is_available',
-            'is_active'
+            
         ]
 
         labels = {
