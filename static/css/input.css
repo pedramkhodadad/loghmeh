@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@layer components {
+  .btn    { @apply inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 cursor-pointer; }
+  .edit   { @apply inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700; }
+  .delete { @apply inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700; }
+  .restaurant { @apply bg-white border border-gray-200 rounded-xl p-5 my-4; }
+  form p input:not([type=checkbox]), form p textarea, form p select {
+    @apply w-full border border-gray-300 rounded-lg px-3 py-2 my-2;
+  }
+}

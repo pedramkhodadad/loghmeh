@@ -2,7 +2,8 @@
 from django import forms
 from .models import Restaurant
 from .models import Food
-
+import re
+from django.core.exceptions import ValidationError
 class RestaurantForm(forms.ModelForm):
 
     class Meta:
@@ -34,6 +35,11 @@ class RestaurantForm(forms.ModelForm):
             ),
         }
 
+    def clean_phone(self):
+        phone = self.cleaned_data['phone'].strip().replace(' ', '').replace('-', '')
+        if not re.fullmatch(r'(0\d{10}|\+98\d{10})', phone):
+            raise ValidationError('شماره تماس معتبر نیست (مثال: 09123456789 یا 02112345678).')
+        return phone
 
 
 
@@ -48,6 +54,7 @@ class FoodForm(forms.ModelForm):
             'price',
             'image',
             'is_available',
+            'is_active'
         ]
 
         labels = {

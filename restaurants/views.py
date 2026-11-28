@@ -1,6 +1,4 @@
-
 from functools import wraps
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -8,25 +6,10 @@ from django.db.models.deletion import ProtectedError
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-
 from .models import Restaurant, Food
 from .forms import RestaurantForm, FoodForm
+from accounts.decorators import owner_required
 
-
-# بررسی دسترسی صاحب رستوران
-def owner_required(view_func):
-
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-
-        if request.user.role != 'owner':
-            return HttpResponseForbidden(
-                'شما اجازه دسترسی به این بخش را ندارید.'
-            )
-
-        return view_func(request, *args, **kwargs)
-
-    return wrapper
 
 
 # ==========================================
@@ -50,7 +33,7 @@ def restaurant_list(request):
 
     return render(
         request,
-        'restaurants/restaurant_list.html',
+        'restaurants/restaurant_owner_list.html',
         {
             'restaurants': restaurants,
             'query': query
@@ -80,9 +63,7 @@ def restaurant_detail(request, pk):
     )
 
 
-# ==========================================
-# مدیریت رستوران توسط صاحب رستوران
-# ==========================================
+
 
 @login_required
 @owner_required
@@ -94,7 +75,7 @@ def restaurant_owner_list(request):
 
     return render(
         request,
-        'restaurants/restaurant_list.html',
+        'restaurants/restaurant_owner_list.html',   # قبلاً restaurant_list.html بود
         {
             'restaurants': restaurants,
             'query': ''
@@ -193,17 +174,12 @@ def restaurant_delete(request, pk):
     )
 
     if request.method == 'POST':
-
-        restaurant.delete()
-
-        messages.success(
-            request,
-            'رستوران حذف شد.'
-        )
-
-        return redirect(
-            'restaurants:restaurant_owner_list'
-        )
+        try:
+            restaurant.delete()
+            messages.success(request, 'رستوران حذف شد.')
+        except ProtectedError:
+            messages.error(request, 'این رستوران سفارش ثبت‌شده دارد و قابل حذف نیست. می‌توانید آن را غیرفعال کنید.')
+        return redirect('restaurants:restaurant_owner_list')
 
     return render(
         request,

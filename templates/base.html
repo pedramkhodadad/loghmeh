@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}لقمه{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<nav class="bg-white shadow-sm px-6 py-3 flex flex-wrap items-center gap-5">
+    <a href="{% url 'restaurants:restaurant_list' %}" class="text-xl font-extrabold text-green-600">لقمه</a>
+    <a href="{% url 'restaurants:restaurant_list' %}">رستوران‌ها</a>
+
+    {% if user.is_authenticated and user.role == 'owner' %}
+        <a href="{% url 'restaurants:restaurant_owner_list' %}">رستوران‌های من</a>
+        <a href="{% url 'orders:restaurant_order_list' %}">سفارش‌های دریافتی</a>
+        <a href="{% url 'discounts:discount_list' %}">تخفیف‌ها</a>
+    {% endif %}
+
+    {# پدرام بعد از merge لینک سبد خرید و سفارش‌های من را برای مشتری اینجا اضافه می‌کند #}
+
+    <div class="mr-auto flex items-center gap-4">
+        {% if user.is_authenticated %}
+            <span class="text-gray-500">{{ user.username }}</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-red-600">خروج</button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">ورود</a>
+            <a href="{% url 'accounts:register' %}">ثبت‌نام</a>
+        {% endif %}
+    </div>
+</nav>
+
+<main class="max-w-6xl mx-auto p-6">
+    {% for message in messages %}
+        <div class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

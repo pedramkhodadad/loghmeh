@@ -72,11 +72,6 @@ urlpatterns = [
         views.food_toggle_availability,
         name='food_toggle_availability'
     ),
-    path(
-    'my/',
-    views.restaurant_owner_list,
-    name='restaurant_owner_list'
-    ),
 
 ]
 
