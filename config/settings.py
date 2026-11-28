@@ -136,3 +136,5 @@ MAILERS = {
 AUTH_USER_MODEL = 'accounts.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]   # اگر از نسخه‌ی پدرام برنداشتی
+LOGIN_URL = "accounts:login"
